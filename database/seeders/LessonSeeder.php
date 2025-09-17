@@ -27,9 +27,9 @@ class LessonSeeder extends Seeder
                     'title' => 'Introdução ao Laravel',
                     'description' => 'Visão geral do framework Laravel e suas principais características',
                     'type' => 'video',
-                    // Exemplo com Bunny Stream (substitua pelo GUID real no futuro)
+                    // Bunny Stream: GUID real informado
                     'provider' => 'bunny',
-                    'provider_video_id' => 'YOUR_BUNNY_VIDEO_GUID',
+                    'provider_video_id' => 'dcc24989-a12f-4b7e-936c-6d0d8fdb3729',
                     'provider_signed' => true,
                     'duration_minutes' => 15,
                     'sort_order' => 1,
