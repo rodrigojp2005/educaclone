@@ -170,7 +170,7 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
                 <i class="fas fa-graduation-cap me-2"></i>
-                TutoCursos
+                TutoCursos, tudo em tutorial
             </a>
 
             <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Abrir menu">
