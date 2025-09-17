@@ -30,6 +30,18 @@ class Lesson extends Model
         'is_published',
         'quiz_data',
         'course_id',
+        // External / curation fields
+        'is_external',
+        'is_teaser',
+        'is_active',
+        'source_url',
+        'source_channel_title',
+        'source_channel_url',
+        'source_license_type',
+        'thumbnail_url',
+        'duration_seconds',
+        'last_checked_at',
+        'check_status',
     ];
 
     protected $casts = [
@@ -37,6 +49,10 @@ class Lesson extends Model
         'is_published' => 'boolean',
         'quiz_data' => 'array',
         'provider_signed' => 'boolean',
+        'is_external' => 'boolean',
+        'is_teaser' => 'boolean',
+        'is_active' => 'boolean',
+        'last_checked_at' => 'datetime',
     ];
 
     /**
@@ -139,7 +155,9 @@ class Lesson extends Model
         // Prefer provider-based playback when configured
         if ($this->provider && $this->provider_video_id) {
             try {
-                if ($this->provider === 'cloudflare') {
+                if ($this->provider === 'youtube') {
+                    return $this->youtubeEmbedUrl($this->provider_video_id);
+                } elseif ($this->provider === 'cloudflare') {
                     $svc = CloudflareStreamService::fromConfig();
                     // Use iframe embed with signed token when enabled
                     return $svc->iframeUrl($this->provider_video_id);
@@ -187,5 +205,35 @@ class Lesson extends Model
         }
 
         return sprintf('%dm', $minutes);
+    }
+
+    /**
+     * Build YouTube embed URL (privacy-enhanced domain).
+     */
+    protected function youtubeEmbedUrl(string $videoId): string
+    {
+        // Use youtube-nocookie domain and enable modest branding
+        $params = http_build_query([
+            'rel' => 0,
+            'modestbranding' => 1,
+            'playsinline' => 1,
+        ]);
+        return "https://www.youtube-nocookie.com/embed/{$videoId}?{$params}";
+    }
+
+    /**
+     * Scope: only external curated lessons.
+     */
+    public function scopeExternal($query)
+    {
+        return $query->where('is_external', true);
+    }
+
+    /**
+     * Scope: active lessons.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }
