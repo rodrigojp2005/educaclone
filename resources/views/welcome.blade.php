@@ -7,8 +7,8 @@
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-3">Aprenda Habilidades Online</h1>
-                <p class="lead mb-4">Descubra milhares de cursos online com os melhores instrutores. Desenvolva suas habilidades e transforme sua carreira.</p>
+                <h1 class="display-4 fw-bold mb-3">De vez enquando, um tutorial é tudo o que você precisa</h1>
+                <p class="lead mb-4">Descubra tutoriais e cursos completos com os melhores instrutores. Por que são pessoas que entendem suas necessidades.</p>
                 <div class="d-flex flex-wrap gap-3">
                     @guest
                         <a href="{{ route('login') }}" class="btn btn-light btn-lg">
