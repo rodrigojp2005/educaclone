@@ -168,9 +168,14 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
+            <a class="navbar-brand d-flex flex-column flex-lg-row align-items-lg-center" href="{{ route('home') }}">
                 <i class="fas fa-graduation-cap me-2"></i>
-                TutoCursos <span class="fst-italic" style="font-weight: normal; font-size: 1rem;">tudo em tutoriais e cursos!</span>
+                <span>
+                    TutoCursos
+                    <span class="d-block d-lg-inline fst-italic" style="font-weight: normal; font-size: 1rem;">
+                        tudo em tutoriais e cursos!
+                    </span>
+                </span>
             </a>
 
             <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Abrir menu">
