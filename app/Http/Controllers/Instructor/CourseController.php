@@ -1,61 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Category;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $query = Course::with(['instructor','category']);
-
-        if ($search = request('q')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%$search%")
-                  ->orWhere('short_description', 'like', "%$search%")
-                  ->orWhere('description', 'like', "%$search%");
-            });
-        }
-        if ($status = request('status')) {
-            $query->where('status', $status);
-        }
-        if ($category = request('category_id')) {
-            $query->where('category_id', $category);
-        }
-        if ($instructor = request('instructor_id')) {
-            $query->where('instructor_id', $instructor);
-        }
-
-        $courses = $query->orderByDesc('created_at')->paginate(20)->withQueryString();
+        $courses = Course::where('instructor_id', Auth::id())
+            ->with(['category'])
+            ->orderByDesc('created_at')
+            ->paginate(20);
 
         $categories = Category::orderBy('name')->get();
-        $instructors = User::where('role','instructor')->orderBy('name')->get();
 
-        return view('admin.courses.index', compact('courses','categories','instructors'));
+        return view('instructor.courses.index', compact('courses','categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        $instructors = User::where('role','instructor')->orderBy('name')->get();
-        return view('admin.courses.create', compact('categories','instructors'));
+        return view('instructor.courses.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -70,7 +43,6 @@ class CourseController extends Controller
             'is_featured' => ['nullable','boolean'],
             'is_free' => ['nullable','boolean'],
             'published_at' => ['nullable','date'],
-            'instructor_id' => ['required','exists:users,id'],
             'category_id' => ['required','exists:categories,id'],
         ]);
 
@@ -86,38 +58,23 @@ class CourseController extends Controller
             'is_featured' => $data['is_featured'] ?? false,
             'is_free' => $data['is_free'] ?? false,
             'published_at' => $data['published_at'] ?? null,
-            'instructor_id' => $data['instructor_id'],
+            'instructor_id' => Auth::id(),
             'category_id' => $data['category_id'],
         ]);
 
-        return redirect()->route('admin.courses.edit', $course)->with('success', 'Curso criado com sucesso.');
+        return redirect()->route('instructor.courses.edit', $course)->with('success', 'Curso criado com sucesso.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        return redirect()->route('admin.courses.edit', $id);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $course = Course::with(['instructor','category'])->findOrFail($id);
+        $course = Course::where('instructor_id', Auth::id())->findOrFail($id);
         $categories = Category::orderBy('name')->get();
-        $instructors = User::where('role','instructor')->orderBy('name')->get();
-        return view('admin.courses.edit', compact('course','categories','instructors'));
+        return view('instructor.courses.edit', compact('course','categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::where('instructor_id', Auth::id())->findOrFail($id);
 
         $data = $request->validate([
             'title' => ['required','string','max:255'],
@@ -131,7 +88,6 @@ class CourseController extends Controller
             'is_featured' => ['nullable','boolean'],
             'is_free' => ['nullable','boolean'],
             'published_at' => ['nullable','date'],
-            'instructor_id' => ['required','exists:users,id'],
             'category_id' => ['required','exists:categories,id'],
         ]);
 
@@ -147,20 +103,16 @@ class CourseController extends Controller
             'is_featured' => $data['is_featured'] ?? false,
             'is_free' => $data['is_free'] ?? false,
             'published_at' => $data['published_at'] ?? null,
-            'instructor_id' => $data['instructor_id'],
             'category_id' => $data['category_id'],
         ]);
 
-        return redirect()->route('admin.courses.edit', $course)->with('success', 'Curso atualizado com sucesso.');
+        return redirect()->route('instructor.courses.edit', $course)->with('success', 'Curso atualizado com sucesso.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::where('instructor_id', Auth::id())->findOrFail($id);
         $course->delete();
-        return redirect()->route('admin.courses.index')->with('success', 'Curso excluído com sucesso.');
+        return redirect()->route('instructor.courses.index')->with('success', 'Curso excluído com sucesso.');
     }
 }

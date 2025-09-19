@@ -21,7 +21,7 @@
 
             <div class="mb-4">
                 @if($enrolled)
-                    <a href="#curriculum" class="btn btn-success me-2">Continuar Curso</a>
+                    <a href="#lesson-{{ $nextLessonId ?? '' }}" class="btn btn-success me-2">Continuar Curso</a>
                 @else
                     <form method="POST" action="{{ route('courses.enroll', $course->slug) }}" class="d-inline">
                         @csrf
@@ -59,9 +59,9 @@
             <h4 class="mt-5" id="curriculum">Currículo</h4>
             <div class="accordion" id="lessonsAccordion">
                 @forelse($course->lessons as $lesson)
-                    <div class="accordion-item">
+                    <div class="accordion-item" id="lesson-{{ $lesson->id }}">
                         <h2 class="accordion-header" id="heading-{{ $lesson->id }}">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $lesson->id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $lesson->id }}" aria-expanded="false" aria-controls="collapse-{{ $lesson->id }}">
                                 <div class="d-flex align-items-center w-100">
                                     <span class="me-2 badge bg-secondary">{{ strtoupper(substr($lesson->type,0,1)) }}</span>
                                     <span class="flex-grow-1">{{ $lesson->title }}</span>
@@ -69,10 +69,13 @@
                                     @if($lesson->is_free)
                                         <span class="ms-2 badge bg-success">Preview</span>
                                     @endif
+                                    @if(!empty($completedLessonIds) && in_array($lesson->id, $completedLessonIds))
+                                        <span class="ms-2 badge bg-primary">Concluída</span>
+                                    @endif
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapse-{{ $lesson->id }}" class="accordion-collapse collapse" data-bs-parent="#lessonsAccordion">
+                        <div id="collapse-{{ $lesson->id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ $lesson->id }}" data-bs-parent="#lessonsAccordion">
                             <div class="accordion-body">
                                 @if(!$enrolled && !$lesson->is_free)
                                     <div class="alert alert-warning mb-0">Faça a matrícula para acessar o conteúdo desta aula.</div>
@@ -89,8 +92,9 @@
                                         <a href="{{ $lesson->file_url }}" target="_blank" class="btn btn-outline-secondary btn-sm mb-3">Baixar arquivo</a>
                                     @endif
                                     @if($enrolled)
-                                        <button class="btn btn-sm btn-outline-primary toggle-progress-btn" data-lesson="{{ $lesson->slug }}" data-id="{{ $lesson->id }}">
-                                            Marcar como Concluída
+                                        @php $isCompleted = !empty($completedLessonIds) && in_array($lesson->id, $completedLessonIds); @endphp
+                                        <button class="btn btn-sm toggle-progress-btn {{ $isCompleted ? 'btn-success' : 'btn-outline-primary' }}" data-lesson="{{ $lesson->slug }}" data-id="{{ $lesson->id }}">
+                                            {{ $isCompleted ? 'Concluída ✓' : 'Marcar como Concluída' }}
                                         </button>
                                     @endif
                                 @endif
@@ -169,7 +173,7 @@
 
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
     document.querySelectorAll('.toggle-progress-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -185,13 +189,44 @@
             .then(r => r.json())
             .then(data => {
                 if (data.completed !== undefined) {
-                    this.classList.toggle('btn-outline-primary');
-                    this.classList.toggle('btn-success');
-                    this.textContent = data.completed ? 'Concluída ✔' : 'Marcar como Concluída';
+                    this.classList.toggle('btn-outline-primary', !data.completed);
+                    this.classList.toggle('btn-success', data.completed);
+                    this.textContent = data.completed ? 'Concluída ✓' : 'Marcar como Concluída';
+                    // Atualiza badge no header da aula
+                    const header = this.closest('.accordion-item').querySelector('.accordion-button .d-flex');
+                    if (header) {
+                        let badge = header.querySelector('.badge.bg-primary');
+                        if (data.completed && !badge) {
+                            const span = document.createElement('span');
+                            span.className = 'ms-2 badge bg-primary';
+                            span.textContent = 'Concluída';
+                            header.appendChild(span);
+                        }
+                        if (!data.completed && badge) {
+                            badge.remove();
+                        }
+                    }
                 }
             })
             .catch(err => console.error(err));
         });
     });
+
+    // Abre automaticamente a próxima aula sem "toggle" duplo (usa API do Bootstrap)
+    document.addEventListener('DOMContentLoaded', function() {
+        const targetId = '{{ $nextLessonId ?? '' }}';
+        if (targetId) {
+            const collapseEl = document.getElementById('collapse-' + targetId);
+            if (collapseEl && window.bootstrap && window.bootstrap.Collapse) {
+                const instance = window.bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false });
+                instance.show();
+                // Rolagem suave até a aula atual
+                const lessonAnchor = document.getElementById('lesson-' + targetId);
+                if (lessonAnchor) {
+                    lessonAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+    });
 </script>
-@endpush
+@endsection

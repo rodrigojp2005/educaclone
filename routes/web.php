@@ -39,13 +39,37 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = auth()->user();
+    if (!$user) {
+        return redirect()->route('login');
+    }
+    if ($user->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+    if ($user->isInstructor()) {
+        return redirect()->route('instructor.dashboard');
+    }
+    if ($user->isStudent()) {
+        return redirect()->route('my-courses.index');
+    }
+    return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Rotas do painel do instrutor
+Route::prefix('instructor')->name('instructor.')->middleware(['auth','role:instructor'])->group(function () {
+    \App\Http\Controllers\Instructor\DashboardController::routes();
+    Route::resource('courses', \App\Http\Controllers\Instructor\CourseController::class);
+    // Lessons nested under courses
+    Route::resource('courses.lessons', \App\Http\Controllers\Instructor\LessonController::class)->scoped([
+        'course' => 'id',
+        'lesson' => 'id',
+    ])->shallow();
 });
 
 // Rotas do painel administrativo

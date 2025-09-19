@@ -162,6 +162,10 @@
                 visibility: visible !important;
             }
         }
+
+        /* Fix: Tailwind's .collapse utility conflicts with Bootstrap's accordion */
+        .accordion .collapse { visibility: visible !important; }
+        .accordion .collapse:not(.show) { display: none; }
     </style>
 </head>
 <body>
@@ -239,6 +243,9 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ route('my-courses.index') }}">Meus Cursos</a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Perfil</a></li>
+                                @if(method_exists(Auth::user(), 'isInstructor') && Auth::user()->isInstructor())
+                                    <li><a class="dropdown-item" href="{{ route('instructor.dashboard') }}">Área do Instrutor</a></li>
+                                @endif
                                 @if(method_exists(Auth::user(), 'isAdmin') && Auth::user()->isAdmin())
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Painel Admin</a></li>
@@ -283,6 +290,9 @@
                             <li class="nav-item mt-2"><a class="btn btn-primary w-100" href="{{ route('register') }}">Cadastrar</a></li>
                         @else
                             <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Perfil</a></li>
+                            @if(method_exists(Auth::user(), 'isInstructor') && Auth::user()->isInstructor())
+                                <li class="nav-item"><a class="nav-link" href="{{ route('instructor.dashboard') }}">Área do Instrutor</a></li>
+                            @endif
                             <li class="nav-item mt-2">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf

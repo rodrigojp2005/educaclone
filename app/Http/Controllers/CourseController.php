@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Category;
+use App\Models\LessonProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,14 +80,32 @@ class CourseController extends Controller
         $course->load([
             'instructor', 'category',
             'lessons' => function ($q) { $q->ordered(); },
-            'reviews.user' => function ($q) { $q->approved()->latest('reviewed_at'); }
+            'reviews' => function ($q) { $q->approved()->latest('reviewed_at')->with('user'); },
         ]);
 
         $enrolled = false;
+        $completedLessonIds = [];
+        $nextLessonId = null;
         if (Auth::check()) {
             $enrolled = $course->enrollments()->where('user_id', Auth::id())->exists();
+            if ($enrolled) {
+                $lessonIds = $course->lessons->pluck('id');
+                if ($lessonIds->isNotEmpty()) {
+                    $completedLessonIds = LessonProgress::where('user_id', Auth::id())
+                        ->whereIn('lesson_id', $lessonIds)
+                        ->where('is_completed', true)
+                        ->pluck('lesson_id')
+                        ->all();
+                    // Determine next lesson (first not completed; otherwise first lesson)
+                    $orderedLessons = $course->lessons->sortBy(['sort_order', 'created_at']);
+                    $next = $orderedLessons->first(function ($l) use ($completedLessonIds) {
+                        return !in_array($l->id, $completedLessonIds, true);
+                    });
+                    $nextLessonId = $next?->id ?? $orderedLessons->first()?->id;
+                }
+            }
         }
 
-        return view('courses.show', compact('course', 'enrolled'));
+        return view('courses.show', compact('course', 'enrolled', 'completedLessonIds', 'nextLessonId'));
     }
 }
