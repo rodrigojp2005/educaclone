@@ -1,8 +1,5 @@
 @extends('admin.layout')
-
-@section('title', 'Dashboard')
-@section('page-title', 'Dashboard')
-
+@section('title', 'Dashboard Admin')
 @section('content')
 <div class="row">
     <!-- Estatísticas -->
