@@ -1,6 +1,5 @@
-@extends('admin.layout')
-
-@section('instructor-page-title','Painel do Instrutor')
+@extends('admin.base')
+@section('page-title','Dashboard')
 
 @section('content')
 <div class="row">
