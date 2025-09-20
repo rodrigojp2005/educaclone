@@ -1,6 +1,61 @@
-@extends('admin.layout')
+@extends('admin.base')
 @section('title', 'Dashboard Admin')
 @section('content')
+<!-- ADMIN-DASHBOARD-STYLE-FALLBACK: estilos mínimos para quando o layout não carrega -->
+<style>
+    .card { border: 1px solid #e0e0e0; border-radius: 0.5rem; background: #fff; margin-bottom: 1rem; }
+    .card-header { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; background: #f8f9fa; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+    .card-body { padding: 1rem; }
+    .shadow { box-shadow: 0 0.5rem 1rem rgba(0,0,0,.10); }
+    .badge { display: inline-block; padding: .35em .6em; font-size: .75rem; font-weight: 600; border-radius: .25rem; }
+    .bg-primary { background-color: #0d6efd !important; color: #fff; }
+    .bg-success { background-color: #198754 !important; color: #fff; }
+    .bg-info { background-color: #0dcaf0 !important; color: #fff; }
+    .bg-warning { background-color: #ffc107 !important; color: #212529; }
+    .bg-danger { background-color: #dc3545 !important; color: #fff; }
+    .text-muted { color: #6c757d !important; }
+    .border-left-primary { border-left: .25rem solid #0d6efd !important; }
+    .border-left-success { border-left: .25rem solid #198754 !important; }
+    .border-left-info { border-left: .25rem solid #0dcaf0 !important; }
+    .border-left-warning { border-left: .25rem solid #ffc107 !important; }
+    .h-100 { height: 100%; }
+    .py-2 { padding-top: .5rem; padding-bottom: .5rem; }
+    .mb-4 { margin-bottom: 1.5rem; }
+    .mb-3 { margin-bottom: 1rem; }
+    .me-2 { margin-right: .5rem; }
+    .m-0 { margin: 0; }
+    .row { display: flex; flex-wrap: wrap; margin-right: -0.5rem; margin-left: -0.5rem; }
+    .col, .col-auto, [class^="col-"] { position: relative; width: 100%; padding-right: .5rem; padding-left: .5rem; }
+    .col-auto { flex: 0 0 auto; width: auto; }
+    .col-md-6 { flex: 0 0 auto; width: 50%; }
+    .col-lg-6 { flex: 0 0 auto; width: 50%; }
+    .col-lg-12 { flex: 0 0 auto; width: 100%; }
+    .col-xl-3 { flex: 0 0 auto; width: 25%; }
+    .text-primary { color: #0d6efd !important; }
+    .text-success { color: #198754 !important; }
+    .text-info { color: #0dcaf0 !important; }
+    .text-warning { color: #ffc107 !important; }
+    .text-gray-800 { color: #343a40 !important; }
+    .text-uppercase { text-transform: uppercase; }
+    .font-weight-bold { font-weight: 700; }
+    .small { font-size: .875rem; }
+    .h5 { font-size: 1.25rem; }
+    .h6 { font-size: 1rem; }
+    .fa-2x { font-size: 2em; }
+    .align-items-center { align-items: center; }
+    .d-flex { display: flex; }
+    .justify-content-between { justify-content: space-between; }
+    hr { border: 0; border-top: 1px solid #e9ecef; margin: .75rem 0; }
+    @media (max-width: 992px) {
+        .col-lg-6 { width: 100%; }
+        .col-xl-3, .col-md-6 { width: 100%; }
+    }
+    @media (max-width: 576px) {
+        .h5 { font-size: 1.1rem; }
+        .h6 { font-size: .95rem; }
+    }
+    /* Fim do fallback */
+</style>
 <div class="row">
     <!-- Estatísticas -->
     <div class="col-xl-3 col-md-6 mb-4">
