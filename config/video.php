@@ -3,6 +3,12 @@
 return [
     'default' => env('VIDEO_PROVIDER', 'bunny'),
 
+    // YouTube embed settings
+    'youtube' => [
+        // Use privacy-enhanced domain by default. Set to false to use www.youtube.com
+        'use_nocookie_domain' => env('VIDEO_YOUTUBE_NOCOOKIE', true),
+    ],
+
     'cloudflare' => [
         'account_id' => env('CF_STREAM_ACCOUNT_ID'),
         'key_id' => env('CF_STREAM_SIGNING_KEY_ID'),

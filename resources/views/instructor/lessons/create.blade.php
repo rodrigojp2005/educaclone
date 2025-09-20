@@ -37,14 +37,17 @@
                     <option value="bunny">Bunny</option>
                     <option value="url">URL direta</option>
                 </select>
+                <div class="form-text">Recomendado: escolha YouTube e cole o ID ou link (watch, youtu.be, embed). Se colar um link do YouTube em “URL direta”, converteremos automaticamente para YouTube.</div>
             </div>
             <div class="col-md-4">
                 <label class="form-label">YouTube ID/URL ou UID do Provider</label>
                 <input type="text" name="video_input" value="{{ old('video_input') }}" class="form-control" placeholder="Ex: dQw4w9WgXcQ ou https://youtu.be/dQw4...">
+                <div class="form-text">Aceita formatos: ID puro, https://youtu.be/ID, https://www.youtube.com/watch?v=ID, ou /embed/ID.</div>
             </div>
             <div class="col-md-12">
                 <label class="form-label">URL do Vídeo (se URL direta)</label>
                 <input type="url" name="video_url" value="{{ old('video_url') }}" class="form-control" placeholder="https://...">
+                <div class="form-text">Use apenas arquivos diretos (mp4/HLS). Se colar um link do YouTube aqui, detectaremos o ID e mudaremos o provider para YouTube automaticamente.</div>
             </div>
             <div class="col-md-12">
                 <label class="form-label">Descrição/Conteúdo</label>

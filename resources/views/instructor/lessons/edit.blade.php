@@ -11,7 +11,7 @@
 
  <div class="card shadow">
     <div class="card-body">
-        <form method="POST" action="{{ route('instructor.courses.lessons.update', [$course, $lesson]) }}" class="row g-3">
+    <form method="POST" action="{{ route('instructor.lessons.update', $lesson) }}" class="row g-3">
             @csrf
             @method('PUT')
             <div class="col-md-8">
@@ -37,6 +37,7 @@
                         <option value="{{ $val }}" @selected(old('provider', $lesson->provider)===$val)>{{ $label }}</option>
                     @endforeach
                 </select>
+                <div class="form-text">Recomendado: escolha YouTube e cole o ID ou link (watch, youtu.be, embed). Se colar um link do YouTube em “URL direta”, converteremos automaticamente para YouTube.</div>
             </div>
             <div class="col-md-4">
                 <label class="form-label">YouTube ID/URL ou UID do Provider</label>
@@ -45,6 +46,7 @@
             <div class="col-md-12">
                 <label class="form-label">URL do Vídeo (se URL direta)</label>
                 <input type="url" name="video_url" value="{{ old('video_url', $lesson->video_url) }}" class="form-control" placeholder="https://...">
+                <div class="form-text">Use apenas arquivos diretos (mp4/HLS). Se colar um link do YouTube aqui, detectaremos o ID e mudaremos o provider para YouTube automaticamente.</div>
             </div>
             <div class="col-md-12">
                 <label class="form-label">Descrição/Conteúdo</label>

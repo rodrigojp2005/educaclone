@@ -41,8 +41,8 @@
                             @endif
                         </td>
                         <td class="text-end">
-                            <a href="{{ route('instructor.courses.lessons.edit', [$course, $lesson]) }}" class="btn btn-sm btn-outline-primary">Editar</a>
-                            <form action="{{ route('instructor.courses.lessons.destroy', [$course, $lesson]) }}" method="POST" class="d-inline" onsubmit="return confirm('Excluir esta aula?');">
+                            <a href="{{ route('instructor.lessons.edit', $lesson) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form action="{{ route('instructor.lessons.destroy', $lesson) }}" method="POST" class="d-inline" onsubmit="return confirm('Excluir esta aula?');">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>

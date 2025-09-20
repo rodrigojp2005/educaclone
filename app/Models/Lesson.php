@@ -172,6 +172,11 @@ class Lesson extends Model
 
         // Fallbacks (legacy)
         if ($this->video_url) {
+            // If a YouTube URL was stored as a direct URL, convert to proper embed at runtime
+            $id = $this->extractYouTubeIdFromUrl($this->video_url);
+            if ($id) {
+                return $this->youtubeEmbedUrl($id);
+            }
             return $this->video_url;
         }
         if ($this->video_file) {
@@ -212,13 +217,32 @@ class Lesson extends Model
      */
     protected function youtubeEmbedUrl(string $videoId): string
     {
-        // Use youtube-nocookie domain and enable modest branding
+        // Use youtube-nocookie (privacy) or standard youtube domain based on config
+        $useNoCookie = (bool) (config('video.youtube.use_nocookie_domain', true));
+        $host = $useNoCookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
         $params = http_build_query([
             'rel' => 0,
             'modestbranding' => 1,
             'playsinline' => 1,
         ]);
-        return "https://www.youtube-nocookie.com/embed/{$videoId}?{$params}";
+        return "$host/embed/{$videoId}?{$params}";
+    }
+
+    /**
+     * Best-effort YouTube ID extractor for various URL formats.
+     */
+    protected function extractYouTubeIdFromUrl(string $value): ?string
+    {
+        $value = trim($value);
+        // Raw ID
+        if (preg_match('~^[a-zA-Z0-9_-]{11}$~', $value)) {
+            return $value;
+        }
+        // Common URL patterns: watch?v=, youtu.be/, embed/, shorts/
+        if (preg_match('~(?:v=|youtu\.be/|embed/|shorts/)([a-zA-Z0-9_-]{11})~', $value, $m)) {
+            return $m[1];
+        }
+        return null;
     }
 
     /**

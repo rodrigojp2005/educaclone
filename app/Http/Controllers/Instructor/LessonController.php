@@ -10,29 +10,36 @@ use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {
-    protected function ensureOwnership(Course $course): void
+    protected function ensureCourseOwnership(Course $course): void
     {
         if ($course->instructor_id !== Auth::id()) {
             abort(403);
         }
     }
 
+    protected function ensureLessonOwnership(Lesson $lesson): void
+    {
+        if (!$lesson->course || $lesson->course->instructor_id !== Auth::id()) {
+            abort(403);
+        }
+    }
+
     public function index(Course $course)
     {
-        $this->ensureOwnership($course);
+        $this->ensureCourseOwnership($course);
         $lessons = $course->lessons()->ordered()->paginate(20);
         return view('instructor.lessons.index', compact('course', 'lessons'));
     }
 
     public function create(Course $course)
     {
-        $this->ensureOwnership($course);
+        $this->ensureCourseOwnership($course);
         return view('instructor.lessons.create', compact('course'));
     }
 
     public function store(Request $request, Course $course)
     {
-        $this->ensureOwnership($course);
+        $this->ensureCourseOwnership($course);
 
         $data = $this->validateLesson($request);
         $this->normalizeProviderFields($data);
@@ -44,17 +51,17 @@ class LessonController extends Controller
             ->with('success', 'Aula criada com sucesso.');
     }
 
-    public function edit(Course $course, Lesson $lesson)
+    public function edit(Lesson $lesson)
     {
-        $this->ensureOwnership($course);
-        if ($lesson->course_id !== $course->id) abort(404);
+        $this->ensureLessonOwnership($lesson);
+        $course = $lesson->course;
         return view('instructor.lessons.edit', compact('course', 'lesson'));
     }
 
-    public function update(Request $request, Course $course, Lesson $lesson)
+    public function update(Request $request, Lesson $lesson)
     {
-        $this->ensureOwnership($course);
-        if ($lesson->course_id !== $course->id) abort(404);
+        $this->ensureLessonOwnership($lesson);
+        $course = $lesson->course;
 
         $data = $this->validateLesson($request, $lesson->id);
         $this->normalizeProviderFields($data);
@@ -65,10 +72,10 @@ class LessonController extends Controller
             ->with('success', 'Aula atualizada com sucesso.');
     }
 
-    public function destroy(Course $course, Lesson $lesson)
+    public function destroy(Lesson $lesson)
     {
-        $this->ensureOwnership($course);
-        if ($lesson->course_id !== $course->id) abort(404);
+        $this->ensureLessonOwnership($lesson);
+        $course = $lesson->course;
         $lesson->delete();
         return redirect()->route('instructor.courses.lessons.index', $course)
             ->with('success', 'Aula excluída.');
@@ -124,6 +131,15 @@ class LessonController extends Controller
         } elseif ($provider === 'url' && !empty($data['video_url'])) {
             // Direct URL fallback
             $data['is_external'] = true;
+
+            // If a YouTube watch/shorts/share URL was pasted as direct URL, auto-convert to proper YouTube provider
+            $maybeId = $this->extractYouTubeId((string)$data['video_url']);
+            if ($maybeId) {
+                $data['provider'] = 'youtube';
+                $data['provider_video_id'] = $maybeId;
+                // Clear raw URL to avoid using non-embeddable watch pages
+                $data['video_url'] = null;
+            }
         }
 
         unset($data['video_input']);
