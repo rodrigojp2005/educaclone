@@ -49,11 +49,7 @@
         .btn-close{ float:right; border:none; background:transparent; font-size:1.2rem; }
     </style>
 
-    <!-- Bootstrap and Icons via CDN (optional; layout works without) -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <!-- Removido dependências CDN para modo zero-CDN; os ícones usam classes de texto como fallback -->
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('head')
@@ -107,7 +103,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Sem JS externo; se app.js tiver Bootstrap, ele cobrirá; caso contrário, o layout básico funciona sem JS -->
     @yield('scripts')
 </body>
 </html>

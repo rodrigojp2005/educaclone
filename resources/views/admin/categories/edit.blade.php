@@ -1,4 +1,4 @@
-@extends('admin.layout')
+@extends('admin.base')
 
 @section('title', 'Editar Categoria')
 @section('page-title', 'Editar Categoria')
