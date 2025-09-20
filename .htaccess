@@ -1,0 +1,11 @@
+# If your host points the document root to the project root instead of /public,
+# this redirects all requests to /public preserving the path.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Skip if already in /public or requesting existing files/dirs
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>
