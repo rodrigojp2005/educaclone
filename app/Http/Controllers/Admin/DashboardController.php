@@ -47,8 +47,12 @@ class DashboardController extends Controller
         // Receita total (simulada)
         $totalRevenue = Enrollment::sum('price_paid');
 
-        // TEMP: Force rendering of a minimal view to validate layout application in production
-        // Swap back to dashboard2 after confirming admin.base renders in /admin/_debug and here
-        return view('admin.debug');
+        return view('admin.dashboard2', compact(
+            'stats',
+            'popularCourses',
+            'recentUsers',
+            'recentReviews',
+            'totalRevenue'
+        ));
     }
 }
