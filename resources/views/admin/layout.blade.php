@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Área do Instrutor') - {{ config('app.name', 'Udemy Clone') }}</title>
+    <title>@yield('title', 'Área do Administrador') - {{ config('app.name', 'Udemy Clone') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -36,22 +36,36 @@
             <nav class="col-md-3 col-lg-2 d-md-block sidebar">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
-                        <h5 class="text-white">Instrutor</h5>
+                        <h5 class="text-white">Admin</h5>
                     </div>
 
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}"
-                               href="{{ route('instructor.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                               href="{{ route('admin.dashboard') }}">
                                 <i class="fas fa-gauge-high me-2"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('instructor.courses.*') ? 'active' : '' }}"
-                               href="{{ route('instructor.courses.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                               href="{{ route('admin.users.index') }}">
+                                <i class="fas fa-users me-2"></i>
+                                Usuários
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
+                               href="{{ route('admin.categories.index') }}">
+                                <i class="fas fa-tags me-2"></i>
+                                Categorias
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}"
+                               href="{{ route('admin.courses.index') }}">
                                 <i class="fas fa-graduation-cap me-2"></i>
-                                Meus Cursos
+                                Cursos
                             </a>
                         </li>
                         <li class="nav-item"><hr class="text-muted"></li>
@@ -78,7 +92,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <!-- Header -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">@yield('instructor-page-title','Painel do Instrutor')</h1>
+                    <h1 class="h2">@yield('page-title','Painel do Administrador')</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         @yield('page-actions')
                     </div>
