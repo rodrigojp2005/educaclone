@@ -47,7 +47,7 @@ class DashboardController extends Controller
         // Receita total (simulada)
         $totalRevenue = Enrollment::sum('price_paid');
 
-        return view('admin.dashboard2', compact(
+        return view('admin.dashboard', compact(
             'stats',
             'popularCourses',
             'recentUsers',

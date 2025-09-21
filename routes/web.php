@@ -75,8 +75,6 @@ Route::prefix('instructor')->name('instructor.')->middleware(['auth','role:instr
 // Rotas do painel administrativo
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    // Debug temporário do layout do admin (remover em produção depois de validar)
-    Route::get('/_debug', function () { return view('admin.debug'); })->name('debug');
     Route::resource('users', UserController::class);
     Route::resource('courses', CourseController::class);
     Route::resource('categories', CategoryController::class);
