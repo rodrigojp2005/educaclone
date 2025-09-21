@@ -293,6 +293,9 @@
                             @if(method_exists(Auth::user(), 'isInstructor') && Auth::user()->isInstructor())
                                 <li class="nav-item"><a class="nav-link" href="{{ route('instructor.dashboard') }}">Área do Instrutor</a></li>
                             @endif
+                            @if(method_exists(Auth::user(), 'isAdmin') && Auth::user()->isAdmin())
+                                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Painel Admin</a></li>
+                            @endif
                             <li class="nav-item mt-2">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
